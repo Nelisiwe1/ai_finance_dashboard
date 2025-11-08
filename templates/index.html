@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>AI-Driven Finance Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body style="font-family: Arial; margin: 20px;">
+    <h1>💹 AI-Driven Finance Dashboard</h1>
+    <div id="spending-chart"></div>
+    <div id="prediction-chart"></div>
+
+    <script>
+      async function loadData() {
+        const response = await fetch("/api/transactions");
+        const data = await response.json();
+
+        const dates = data.map(d => d.Date);
+        const amounts = data.map(d => d.Amount);
+
+        Plotly.newPlot("spending-chart", [
+          { x: dates, y: amounts, type: "bar", name: "Actual Spending" }
+        ], { title: "Spending Overview" });
+
+        const predRes = await fetch("/api/predictions");
+        const predData = await predRes.json();
+
+        const predDates = predData.map(d => d.Date);
+        const predAmounts = predData.map(d => d.Predicted_Amount);
+
+        Plotly.newPlot("prediction-chart", [
+          { x: predDates, y: predAmounts, type: "line", name: "Predicted Spending" }
+        ], { title: "Predicted Spending (Next 30 Days)" });
+      }
+
+      loadData();
+    </script>
+  </body>
+</html>
